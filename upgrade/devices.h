@@ -10,4 +10,6 @@ typedef enum {
     TI84pCSE = 6
 } device_type_t;
 
+char *device_type_str(device_type_t type);
+
 #endif

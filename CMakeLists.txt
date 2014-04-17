@@ -16,6 +16,7 @@ include_directories(
 
 add_executable(mktiupgrade
     main.c
+    upgrade/devices.c
 )
 
 target_link_libraries(mktiupgrade ${LIBS})

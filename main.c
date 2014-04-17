@@ -100,6 +100,27 @@ int parse_device(char *device, uint8_t *type) {
 	return 0;
 }
 
+uint8_t detect_device(FILE *rom) {
+	fseek(rom, 0L, SEEK_END);
+	long length = ftell(rom);
+	fseek(rom, 0L, SEEK_SET);
+
+	switch (length) {
+		case 524288:
+			fprintf(stderr, "Warning: Device detection ambiguous between TI-73 and TI-83+. Defaulting to TI-83+.\n");
+			return TI83p;
+		case 1048576:
+			return TI84p;
+		case 2097152:
+			fprintf(stderr, "Warning: Device detection ambiguous between TI-83+ SE and TI-84+ SE. Defaulting to TI-84+ SE.\n");
+			return TI84pSE;
+		case 4194304:
+			return TI84pCSE;
+		default:
+			return 0xFF;
+	}
+}
+
 #define arg(short, long) strcasecmp(short, argv[i]) == 0 || strcasecmp(long, argv[i]) == 0
 
 int main(int argc, char **argv) {
@@ -194,5 +215,77 @@ int main(int argc, char **argv) {
 			}
 		}
 	}
+
+	if (context.infile == NULL) {
+		fprintf(stderr, "Error: no input file specified.\n");
+		exit(1);
+	}
+	if (context.outfile == NULL) {
+		fprintf(stderr, "Error: no output file specified.\n");
+		exit(1);
+	}
+
+	FILE *rom = fopen(context.infile, "r");
+	if (rom == NULL) {
+		fprintf(stderr, "Error: unable to open input file.\n");
+		exit(1);
+	}
+	FILE *output = fopen(context.outfile, "w");
+	if (rom == NULL) {
+		fprintf(stderr, "Error: unable to open output file.\n");
+		exit(1);
+	}
+
+	/* Update pages to include the first page of each section */
+	int page_count = 0;
+	for (i = 0; i < 0x100; i++) {
+		if (context.pages[i]) {
+			page_count++;
+			if (!context.pages[i & ~3]) {
+				page_count++;
+				context.pages[i & ~3] = 2;
+			}
+		}
+	}
+
+	if (page_count == 0) {
+		fprintf(stderr, "Warning: no pages specified");
+	}
+
+	if (context.device_type == 0xFF) {
+		context.device_type = detect_device(rom);
+		if (context.device_type == 0xFF) {
+			fprintf(stderr, "Unable to detect device type from ROM, use --device to set manually.\n");
+			exit(1);
+		}
+	}
+
+	if (context.print_info) {
+		printf(
+			"Upgrade info:\n"
+			"- Version: %d.%d\n"
+			"- Key: %02X\n"
+			"- Hardware revision: %d\n"
+			"- Device type: %s\n"
+			"- Pages: ",
+			context.major_version,
+			context.minor_version,
+			context.key_name,
+			context.hardware_revision,
+			device_type_str(context.device_type)
+		);
+		for (i = 0; i < 0x100; i++) {
+			if (context.pages[i]) {
+				printf("%02X ", i);
+			}
+		}
+		printf("\n");
+		if (context.keyfile) {
+			printf("- Key file: %s", context.keyfile);
+		}
+	}
+
+	fclose(rom);
+	fclose(output);
 	return 0;
 }
