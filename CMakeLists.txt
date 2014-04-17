@@ -5,10 +5,12 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "bin/")
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/modules/")
 add_definitions("-Wall")
 find_package(GMP REQUIRED)
+find_package(OpenSSL REQUIRED)
 
-set(LIBS ${LIBS} ${GMP_LIBRARIES})
+set(LIBS ${LIBS} ${OpenSSL_LIBRARIES} ${GMP_LIBRARIES})
 
 include_directories(
+    ${OpenSSL_LIBRARIES}
     ${GMP_INCLUDE_DIRS}
     upgrade/
     crypto/
