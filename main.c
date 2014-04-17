@@ -4,6 +4,7 @@
 #include <string.h>
 #include <strings.h>
 #include "devices.h"
+#include "upgrade.h"
 
 void show_usage() {
 	printf(
@@ -281,9 +282,34 @@ int main(int argc, char **argv) {
 		}
 		printf("\n");
 		if (context.keyfile) {
-			printf("- Key file: %s", context.keyfile);
+			printf("- Key file: %s\n", context.keyfile);
+		}
+		if (context.sigfile) {
+			printf("- Signature file: %s\n", context.keyfile);
 		}
 	}
+	
+	if (context.keyfile != NULL && context.sigfile != NULL) {
+		fprintf(stderr, "Warning: --signature overrides --key.\n");
+	}
+
+	int len = 0;
+	uint8_t *os_header = create_header(context.key_name, context.major_version,
+			context.minor_version, context.hardware_revision, page_count, &len);
+	uint8_t *data = malloc(len + page_count * 0x4000);
+	memcpy(data, os_header, len);
+	free(os_header);
+
+	for (i = 0; i < 0x100; i++) {
+		if (context.pages[i]) {
+			fseek(rom, i * 0x4000, SEEK_SET);
+			fread(data + len + (i * 0x4000), 1, 0x4000, rom);
+		}
+	}
+	
+	/* data now contains the contents of the OS, which can now be signed. TODO. */
+
+	free(data);
 
 	fclose(rom);
 	fclose(output);
