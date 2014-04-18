@@ -8,3 +8,7 @@ install_manifest.txt
 bin/
 *.rom
 temp/
+*.key
+*.8xu
+*.8cu
+*.73u
