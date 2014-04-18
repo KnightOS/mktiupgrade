@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <strings.h>
+#include <sys/types.h>
+#include <bsd/md5.h>
 #include "ticrypto.h"
 
 void initialize_key(tikey_t *key) {
@@ -10,6 +12,17 @@ void initialize_key(tikey_t *key) {
 	mpz_init(key->p);
 	mpz_init(key->q);
 	mpz_init(key->D);
+}
+
+uint8_t *sign_os(uint8_t *header, int headerlen, uint8_t *data, int datalen, tikey_t key) {
+	MD5_CTX md5;
+	MD5Init(&md5);
+	MD5Update(&md5, header, headerlen);
+	MD5Update(&md5, data, datalen);
+	MD5Pad(&md5);
+	uint8_t *digest = malloc(MD5_DIGEST_LENGTH);
+	MD5Final(digest, &md5);
+	return NULL;
 }
 
 void reverse_endianness(char *str) {

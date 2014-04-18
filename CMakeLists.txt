@@ -10,7 +10,7 @@ find_package(OpenSSL REQUIRED)
 set(LIBS ${LIBS} ${OpenSSL_LIBRARIES} ${GMP_LIBRARIES})
 
 include_directories(
-    ${OpenSSL_LIBRARIES}
+    ${OpenSSL_INCLUDE_DIRS}
     ${GMP_INCLUDE_DIRS}
     upgrade/
     crypto/

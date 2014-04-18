@@ -3,8 +3,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <strings.h>
-#include <sys/types.h>
-#include <bsd/md5.h>
 #include <gmp.h>
 #include "devices.h"
 #include "upgrade.h"
@@ -222,22 +220,22 @@ int main(int argc, char **argv) {
 		}
 	}
 
-	if (context.infile == NULL) {
+	if (!context.infile) {
 		fprintf(stderr, "Error: no input file specified.\n");
 		exit(1);
 	}
-	if (context.outfile == NULL) {
+	if (!context.outfile) {
 		fprintf(stderr, "Error: no output file specified.\n");
 		exit(1);
 	}
 
 	FILE *rom = fopen(context.infile, "r");
-	if (rom == NULL) {
+	if (!rom) {
 		fprintf(stderr, "Error: unable to open input file.\n");
 		exit(1);
 	}
 	FILE *output = fopen(context.outfile, "w");
-	if (rom == NULL) {
+	if (!output) {
 		fprintf(stderr, "Error: unable to open output file.\n");
 		exit(1);
 	}
@@ -294,13 +292,13 @@ int main(int argc, char **argv) {
 		}
 	}
 	
-	if (context.keyfile != NULL && context.sigfile != NULL) {
+	if (context.keyfile && context.sigfile) {
 		fprintf(stderr, "Warning: --signature overrides --key.\n");
 	}
 
 	if (context.keyfile != NULL) {
 		FILE *key = fopen(context.keyfile, "r");
-		if (key == NULL) {
+		if (!key) {
 			fprintf(stderr, "Unable to open specified key file.\n");
 			exit(1);
 		}
@@ -322,20 +320,38 @@ int main(int argc, char **argv) {
 	int len = 0;
 	uint8_t *os_header = create_header(context.key_name, context.major_version,
 			context.minor_version, context.hardware_revision, page_count, &len);
-	uint8_t *data = malloc(len + page_count * 0x4000);
-	memcpy(data, os_header, len);
-	free(os_header);
+	uint8_t *os_data = malloc(page_count * 0x4000);
 
 	for (i = 0; i < 0x100; i++) {
 		if (context.pages[i]) {
 			fseek(rom, i * 0x4000, SEEK_SET);
-			fread(data + len + (i * 0x4000), 1, 0x4000, rom);
+			fread(os_data + (i * 0x4000), 1, 0x4000, rom);
 		}
 	}
-	
-	/* data now contains the contents of the OS, which can now be signed. TODO. */
 
-	free(data);
+	uint8_t *signature;
+	if (context.sigfile) {
+		FILE *sig = fopen(context.sigfile, NULL);
+		if (!sig) {
+			fprintf(stderr, "Unable to open specified signature file.\n");
+			exit(1);
+		}
+		fseek(sig, 0L, SEEK_END);
+		long siglen = ftell(sig);
+		fseek(sig, 0L, SEEK_SET);
+		signature = malloc(siglen);
+		if (!signature) {
+			fprintf(stderr, "Unable to allocate signature. Is it too big?\n");
+			exit(1);
+		}
+		fclose(sig);
+	} else if (context.keyfile) {
+		signature = sign_os(os_header, len, os_data, page_count * 0x4000, context.key);
+	} else {
+		fprintf(stderr, "Warning: upgrade is not signed\n");
+	}
+
+	free(os_data);
 
 	fclose(rom);
 	fclose(output);
