@@ -316,7 +316,6 @@ int main(int argc, char **argv) {
 		fread(keystr, 1, key_length, key);
 		parse_key(&context.key, keystr);
 		gen_exponent(&context.key);
-		mpz_out_str(stdout, 16, context.key.D);
 		free(keystr);
 	}
 

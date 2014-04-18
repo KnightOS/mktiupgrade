@@ -12,6 +12,20 @@ void initialize_key(tikey_t *key) {
 	mpz_init(key->D);
 }
 
+void reverse_endianness(char *str) {
+	int len = strlen(str);
+	int i, j;
+	char u, l;
+	for (i = 0, j = len - 2; i < j; i += 2, j -= 2) {
+		u = str[i];
+		l = str[i + 1];
+		str[i] = str[j];
+		str[i + 1] = str[j + 1];
+		str[j] = u;
+		str[j + 1] = l;
+	}
+}
+
 void parse_key(tikey_t *key, char *str) {
 	int i;
 	int l = strlen(str);
@@ -20,10 +34,16 @@ void parse_key(tikey_t *key, char *str) {
 			str[i] = 0;
 		}
 	}
+	str += 2;
+	reverse_endianness(str);
 	mpz_set_str(key->n, str, 16);
-	str += strlen(str) + 1;
+
+	str += strlen(str) + 3;
+	reverse_endianness(str);
 	mpz_set_str(key->p, str, 16);
-	str += strlen(str) + 1;
+
+	str += strlen(str) + 3;
+	reverse_endianness(str);
 	mpz_set_str(key->q, str, 16);
 }
 
