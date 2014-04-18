@@ -23,7 +23,7 @@ add_executable(mktiupgrade
     crypto/ticrypto.c
 )
 
-target_link_libraries(mktiupgrade ${LIBS})
+target_link_libraries(mktiupgrade ${LIBS} ssl crypto)
 
 install(PROGRAMS bin/mktiupgrade
     DESTINATION bin)

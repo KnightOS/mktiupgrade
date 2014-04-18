@@ -1,10 +1,11 @@
-#include <gmp.h>
 #include <stdint.h>
+#include <stdlib.h>
 #include <stdio.h>
+#include <gmp.h>
 #include <string.h>
 #include <strings.h>
 #include <sys/types.h>
-#include <bsd/md5.h>
+#include <openssl/md5.h>
 #include "ticrypto.h"
 
 void initialize_key(tikey_t *key) {
@@ -12,17 +13,6 @@ void initialize_key(tikey_t *key) {
 	mpz_init(key->p);
 	mpz_init(key->q);
 	mpz_init(key->D);
-}
-
-uint8_t *sign_os(uint8_t *header, int headerlen, uint8_t *data, int datalen, tikey_t key) {
-	MD5_CTX md5;
-	MD5Init(&md5);
-	MD5Update(&md5, header, headerlen);
-	MD5Update(&md5, data, datalen);
-	MD5Pad(&md5);
-	uint8_t *digest = malloc(MD5_DIGEST_LENGTH);
-	MD5Final(digest, &md5);
-	return NULL;
 }
 
 void reverse_endianness(char *str) {
@@ -38,8 +28,41 @@ void reverse_endianness(char *str) {
 		str[j + 1] = l;
 	}
 }
+uint8_t *sign_os(uint8_t *header, int headerlen, uint8_t *data, int datalen, tikey_t key, size_t *siglen) {
+	MD5_CTX md5;
+	MD5_Init(&md5);
+	MD5_Update(&md5, header, headerlen);
+	MD5_Update(&md5, data, datalen);
+	uint8_t *digest = malloc(MD5_DIGEST_LENGTH);
+	MD5_Final(digest, &md5);
 
-void parse_key(tikey_t *key, char *str) {
+	char digeststr[34];
+	int i, j;
+	for (i = 0, j = 15; i < 16; i++, j--) {
+		sprintf(&digeststr[i * 2], "%02x", (unsigned int)digest[j]);
+	}
+	digeststr[33] = 0;
+
+	mpz_t hash;
+	mpz_init_set_str(hash, digeststr, 16);
+
+	mpz_powm(hash, hash, key.D, key.n);
+
+	uint8_t *signature = NULL;
+	mpz_export(signature, siglen, 1, 1, 1, 0, hash);
+	signature = realloc(signature, *siglen + 1); /* Add space for encoding stuff */
+	memmove(signature + 3, signature, *siglen - 2);
+	signature[0] = 0x02;
+	signature[1] = 0x0D;
+	signature[2] = 0x40;
+	*siglen += 1;
+
+	return signature;
+}
+
+
+void parse_key(tikey_t *key, char *_str) {
+	char *str = _str;
 	int i;
 	int l = strlen(str);
 	for (i = 0; i < l; i++) {

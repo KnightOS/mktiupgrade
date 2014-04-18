@@ -322,10 +322,12 @@ int main(int argc, char **argv) {
 			context.minor_version, context.hardware_revision, page_count, &len);
 	uint8_t *os_data = malloc(page_count * 0x4000);
 
-	for (i = 0; i < 0x100; i++) {
+	int j;
+	for (i = 0, j = 0; i < 0x100; i++) {
 		if (context.pages[i]) {
 			fseek(rom, i * 0x4000, SEEK_SET);
-			fread(os_data + (i * 0x4000), 1, 0x4000, rom);
+			fread(os_data + (j * 0x4000), 1, 0x4000, rom);
+			j++;
 		}
 	}
 
@@ -346,7 +348,8 @@ int main(int argc, char **argv) {
 		}
 		fclose(sig);
 	} else if (context.keyfile) {
-		signature = sign_os(os_header, len, os_data, page_count * 0x4000, context.key);
+		size_t *siglen;
+		signature = sign_os(os_header, len, os_data, page_count * 0x4000, context.key, &siglen);
 	} else {
 		fprintf(stderr, "Warning: upgrade is not signed\n");
 	}
