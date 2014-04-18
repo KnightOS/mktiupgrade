@@ -13,18 +13,18 @@ void initialize_key(tikey_t *key) {
 }
 
 void parse_key(tikey_t *key, char *str) {
-		int i;
-		int l = strlen(str);
-		for (i = 0; i < l; i++) {
-			if (str[i] == '\n') {
-				str[i] = 0;
-			}
+	int i;
+	int l = strlen(str);
+	for (i = 0; i < l; i++) {
+		if (str[i] == '\n') {
+			str[i] = 0;
 		}
-		mpz_set_str(key->n, str, 16);
-		str += strlen(str) + 1;
-		mpz_set_str(key->p, str, 16);
-		str += strlen(str) + 1;
-		mpz_set_str(key->q, str, 16);
+	}
+	mpz_set_str(key->n, str, 16);
+	str += strlen(str) + 1;
+	mpz_set_str(key->p, str, 16);
+	str += strlen(str) + 1;
+	mpz_set_str(key->q, str, 16);
 }
 
 void gen_exponent(tikey_t *key) {
