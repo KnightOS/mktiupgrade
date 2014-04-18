@@ -15,19 +15,6 @@ void initialize_key(tikey_t *key) {
 	mpz_init(key->D);
 }
 
-void reverse_endianness(char *str) {
-	int len = strlen(str);
-	int i, j;
-	char u, l;
-	for (i = 0, j = len - 2; i < j; i += 2, j -= 2) {
-		u = str[i];
-		l = str[i + 1];
-		str[i] = str[j];
-		str[i + 1] = str[j + 1];
-		str[j] = u;
-		str[j + 1] = l;
-	}
-}
 uint8_t *sign_os(uint8_t *header, int headerlen, uint8_t *data, int datalen, tikey_t key, size_t *siglen) {
 	MD5_CTX md5;
 	MD5_Init(&md5);
@@ -60,6 +47,19 @@ uint8_t *sign_os(uint8_t *header, int headerlen, uint8_t *data, int datalen, tik
 	return signature;
 }
 
+void reverse_endianness(char *str) {
+	int len = strlen(str);
+	int i, j;
+	char u, l;
+	for (i = 0, j = len - 2; i < j; i += 2, j -= 2) {
+		u = str[i];
+		l = str[i + 1];
+		str[i] = str[j];
+		str[i + 1] = str[j + 1];
+		str[j] = u;
+		str[j + 1] = l;
+	}
+}
 
 void parse_key(tikey_t *key, char *_str) {
 	char *str = _str;
