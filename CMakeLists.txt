@@ -14,12 +14,13 @@ include_directories(
     ${GMP_INCLUDE_DIRS}
     upgrade/
     crypto/
-    )
+)
 
 add_executable(mktiupgrade
     main.c
     upgrade/devices.c
     upgrade/upgrade.c
+    crypto/ticrypto.c
 )
 
 target_link_libraries(mktiupgrade ${LIBS})

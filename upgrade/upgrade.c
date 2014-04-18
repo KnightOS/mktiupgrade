@@ -3,6 +3,7 @@
 #include "upgrade.h"
 
 uint8_t *create_header(uint8_t key_name, uint8_t major_version, uint8_t minor_version, uint8_t hardware_revision, uint8_t pages, int *length) {
+	/* TODO: Write the header properly, not hardcoded */
 	const uint8_t base[] = {
 		0x80, 0x0F, 0x00, 0x00, 0x00, 0x00,
 		0x80, 0x11, 0x00, // Key

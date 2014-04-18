@@ -3,8 +3,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <strings.h>
+#include <sys/types.h>
+#include <bsd/md5.h>
+#include <gmp.h>
 #include "devices.h"
 #include "upgrade.h"
+#include "ticrypto.h"
 
 void show_usage() {
 	printf(
@@ -56,6 +60,7 @@ struct {
 	char *outfile;
 	char *keyfile;
 	char *sigfile;
+	tikey_t key;
 	uint8_t key_name;
 	uint8_t major_version;
 	uint8_t minor_version;
@@ -291,6 +296,28 @@ int main(int argc, char **argv) {
 	
 	if (context.keyfile != NULL && context.sigfile != NULL) {
 		fprintf(stderr, "Warning: --signature overrides --key.\n");
+	}
+
+	if (context.keyfile != NULL) {
+		FILE *key = fopen(context.keyfile, "r");
+		if (key == NULL) {
+			fprintf(stderr, "Unable to open specified key file.\n");
+			exit(1);
+		}
+		initialize_key(&context.key);
+		fseek(key, 0L, SEEK_END);
+		long key_length = ftell(key);
+		fseek(key, 0L, SEEK_SET);
+		char *keystr = malloc(key_length);
+		if (keystr == NULL) {
+			fprintf(stderr, "Key file is too large.\n");
+			exit(1);
+		}
+		fread(keystr, 1, key_length, key);
+		parse_key(&context.key, keystr);
+		gen_exponent(&context.key);
+		mpz_out_str(stdout, 16, context.key.D);
+		free(keystr);
 	}
 
 	int len = 0;
