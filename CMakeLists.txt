@@ -30,3 +30,23 @@ install(PROGRAMS bin/mktiupgrade
     DESTINATION bin)
 
 set(CMAKE_BUILD_TYPE Release)
+
+ADD_CUSTOM_TARGET(man ALL)
+
+ADD_CUSTOM_COMMAND(
+  TARGET man
+  SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/mktiupgrade.1.txt
+  COMMAND a2x --doctype manpage --format manpage ${CMAKE_CURRENT_SOURCE_DIR}/mktiupgrade.1.txt 
+  OUTPUTS ${CMAKE_CURRENT_BINARY_DIR}/mktiupgrade.1
+)
+
+ADD_CUSTOM_COMMAND(
+  TARGET man
+  SOURCE man
+  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/mktiupgrade.1
+)
+
+INSTALL(
+    FILES ${CMAKE_CURRENT_BINARY_DIR}/mktiupgrade.1
+    DESTINATION ${CMAKE_INSTALL_PREFIX}/man/man1
+)
