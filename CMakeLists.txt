@@ -20,6 +20,7 @@ add_executable(mktiupgrade
     main.c
     upgrade/devices.c
     upgrade/upgrade.c
+    upgrade/intelhex.c
     crypto/ticrypto.c
 )
 

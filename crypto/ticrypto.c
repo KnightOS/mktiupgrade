@@ -36,13 +36,13 @@ uint8_t *sign_os(uint8_t *header, int headerlen, uint8_t *data, int datalen, tik
 	mpz_powm(hash, hash, key.D, key.n);
 
 	uint8_t *signature = NULL;
-	mpz_export(signature, siglen, 1, 1, 1, 0, hash);
-	signature = realloc(signature, *siglen + 1); /* Add space for encoding stuff */
-	memmove(signature + 3, signature, *siglen - 2);
+	signature = mpz_export(signature, siglen, -1, 1, 1, 0, hash);
+	signature = realloc(signature, *siglen + 3); /* Add space for encoding stuff */
+	memmove(signature + 3, signature, *siglen);
 	signature[0] = 0x02;
 	signature[1] = 0x0D;
 	signature[2] = 0x40;
-	*siglen += 1;
+	*siglen += 3;
 
 	return signature;
 }
@@ -51,6 +51,9 @@ void reverse_endianness(char *str) {
 	int len = strlen(str);
 	int i, j;
 	char u, l;
+	if (len % 2 == 1) {
+		len--;
+	}
 	for (i = 0, j = len - 2; i < j; i += 2, j -= 2) {
 		u = str[i];
 		l = str[i + 1];

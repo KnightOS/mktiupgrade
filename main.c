@@ -331,7 +331,8 @@ int main(int argc, char **argv) {
 		}
 	}
 
-	uint8_t *signature;
+	uint8_t *signature = NULL;
+	size_t siglen;
 	if (context.sigfile) {
 		FILE *sig = fopen(context.sigfile, NULL);
 		if (!sig) {
@@ -348,13 +349,16 @@ int main(int argc, char **argv) {
 		}
 		fclose(sig);
 	} else if (context.keyfile) {
-		size_t siglen;
 		signature = sign_os(os_header, len, os_data, page_count * 0x4000, context.key, &siglen);
 	} else {
 		fprintf(stderr, "Warning: upgrade is not signed\n");
 	}
 
+	write_upgrade(output, context.device_type, context.pages, os_header, len, os_data, page_count * 0x4000, signature, siglen);
+
 	free(os_data);
+	free(os_header);
+	if (signature != NULL) free(signature);
 
 	fclose(rom);
 	fclose(output);
