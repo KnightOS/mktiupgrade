@@ -8,7 +8,7 @@
 #include "upgrade.h"
 #include "ticrypto.h"
 
-void show_usage() {
+void show_usage(void) {
 	printf(
 		"mktiupgrade - Makes TI calculator upgrade files from ROM dumps\n"
 		"\n"
@@ -68,7 +68,7 @@ struct {
 	int pages[256];
 } context;
 
-void set_defaults() {
+void set_defaults(void) {
 	int i;
 	for (i = 0; i < 256; i++) {
 		context.pages[i] = 0;
