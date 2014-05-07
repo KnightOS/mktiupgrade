@@ -288,7 +288,7 @@ int main(int argc, char **argv) {
 			printf("- Key file: %s\n", context.keyfile);
 		}
 		if (context.sigfile) {
-			printf("- Signature file: %s\n", context.keyfile);
+			printf("- Signature file: %s\n", context.sigfile);
 		}
 	}
 	
@@ -334,7 +334,7 @@ int main(int argc, char **argv) {
 	uint8_t *signature = NULL;
 	size_t siglen;
 	if (context.sigfile) {
-		FILE *sig = fopen(context.sigfile, NULL);
+		FILE *sig = fopen(context.sigfile, "r");
 		if (!sig) {
 			fprintf(stderr, "Unable to open specified signature file.\n");
 			exit(1);
@@ -347,6 +347,7 @@ int main(int argc, char **argv) {
 			fprintf(stderr, "Unable to allocate signature. Is it too big?\n");
 			exit(1);
 		}
+		fread(signature, 1, siglen, sig);
 		fclose(sig);
 	} else if (context.keyfile) {
 		signature = sign_os(os_header, len, os_data, page_count * 0x4000, context.key, &siglen);
