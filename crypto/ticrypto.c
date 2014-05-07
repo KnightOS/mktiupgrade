@@ -5,7 +5,7 @@
 #include <string.h>
 #include <strings.h>
 #include <sys/types.h>
-#include <openssl/md5.h>
+#include "md5.h"
 #include "ticrypto.h"
 
 void initialize_key(tikey_t *key) {
@@ -20,7 +20,7 @@ uint8_t *sign_os(uint8_t *header, int headerlen, uint8_t *data, int datalen, tik
 	MD5_Init(&md5);
 	MD5_Update(&md5, header, headerlen);
 	MD5_Update(&md5, data, datalen);
-	uint8_t *digest = malloc(MD5_DIGEST_LENGTH);
+	uint8_t *digest = malloc(16);
 	MD5_Final(digest, &md5);
 
 	char digeststr[34];

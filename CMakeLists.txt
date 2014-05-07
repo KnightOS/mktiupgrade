@@ -5,12 +5,10 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "bin/")
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/modules/")
 add_definitions("-Wall")
 find_package(GMP REQUIRED)
-find_package(OpenSSL REQUIRED)
 
-set(LIBS ${LIBS} ${OpenSSL_LIBRARIES} ${GMP_LIBRARIES})
+set(LIBS ${LIBS} ${GMP_LIBRARIES})
 
 include_directories(
-    ${OpenSSL_INCLUDE_DIRS}
     ${GMP_INCLUDE_DIRS}
     upgrade/
     crypto/
@@ -22,9 +20,10 @@ add_executable(mktiupgrade
     upgrade/upgrade.c
     upgrade/intelhex.c
     crypto/ticrypto.c
+    crypto/md5.c
 )
 
-target_link_libraries(mktiupgrade ${LIBS} ssl crypto)
+target_link_libraries(mktiupgrade ${LIBS})
 
 install(PROGRAMS bin/mktiupgrade
     DESTINATION bin)
