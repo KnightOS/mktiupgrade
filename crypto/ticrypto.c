@@ -1,18 +1,28 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <gmp.h>
 #include <string.h>
 #include <strings.h>
 #include <sys/types.h>
 #include "md5.h"
+#include "tommath.h"
 #include "ticrypto.h"
 
 void initialize_key(tikey_t *key) {
-	mpz_init(key->n);
-	mpz_init(key->p);
-	mpz_init(key->q);
-	mpz_init(key->D);
+	mp_init(&key->n);
+	mp_init(&key->p);
+	mp_init(&key->q);
+	mp_init(&key->D);
+}
+
+void reverse(unsigned char *data, int len) {
+	int i, j;
+	char u;
+	for (i = 0, j = len - 1; i < j; i++, j--) {
+		u = data[i];
+		data[i] = data[j];
+		data[j] = u;
+	}
 }
 
 uint8_t *sign_os(uint8_t *header, int headerlen, uint8_t *data, int datalen, tikey_t key, size_t *siglen) {
@@ -22,27 +32,22 @@ uint8_t *sign_os(uint8_t *header, int headerlen, uint8_t *data, int datalen, tik
 	MD5_Update(&md5, data, datalen);
 	uint8_t *digest = malloc(16);
 	MD5_Final(digest, &md5);
+	reverse(digest, 16);
 
-	char digeststr[34];
-	int i, j;
-	for (i = 0, j = 15; i < 16; i++, j--) {
-		sprintf(&digeststr[i * 2], "%02x", (unsigned int)digest[j]);
-	}
-	digeststr[33] = 0;
+	mp_int hash;
+	mp_init(&hash);
+	mp_read_unsigned_bin(&hash, digest, 16);
 
-	mpz_t hash;
-	mpz_init_set_str(hash, digeststr, 16);
+	mp_exptmod(&hash, &key.D, &key.n, &hash);
 
-	mpz_powm(hash, hash, key.D, key.n);
-
-	uint8_t *signature = NULL;
-	signature = mpz_export(signature, siglen, -1, 1, 1, 0, hash);
-	signature = realloc(signature, *siglen + 3); /* Add space for encoding stuff */
-	memmove(signature + 3, signature, *siglen);
+	int size = mp_unsigned_bin_size(&hash);
+	uint8_t *signature = malloc(size + 3);
+	mp_to_unsigned_bin(&hash, signature + 3);
+	reverse(signature + 3, size);
 	signature[0] = 0x02;
 	signature[1] = 0x0D;
 	signature[2] = 0x40;
-	*siglen += 3;
+	*siglen = size + 3;
 
 	return signature;
 }
@@ -75,29 +80,29 @@ void parse_key(tikey_t *key, char *_str) {
 	}
 	str += 2;
 	reverse_endianness(str);
-	mpz_set_str(key->n, str, 16);
+	mp_read_radix(&key->n, str, 16);
 
 	str += strlen(str) + 3;
 	reverse_endianness(str);
-	mpz_set_str(key->p, str, 16);
+	mp_read_radix(&key->p, str, 16);
 
 	str += strlen(str) + 3;
 	reverse_endianness(str);
-	mpz_set_str(key->q, str, 16);
+	mp_read_radix(&key->q, str, 16);
 }
 
 void gen_exponent(tikey_t *key) {
-	mpz_t e, p, q;
-	mpz_init_set_ui(e, 17);
-	mpz_init_set(p, key->p);
-	mpz_init_set(q, key->q);
+	mp_int e, p, q;
+	mp_init_set_int(&e, 17);
+	mp_init_copy(&p, &key->p);
+	mp_init_copy(&q, &key->q);
 
-	mpz_sub_ui(p, p, 1);
-	mpz_sub_ui(q, q, 1);
-	mpz_mul(p, p, q);
-	mpz_invert(key->D, e, p);
+	mp_sub_d(&p, 1, &p);
+	mp_sub_d(&q, 1, &q);
+	mp_mul(&q, &p, &p);
+	mp_invmod(&e, &p, &key->D);
 
-	mpz_clear(e);
-	mpz_clear(p);
-	mpz_clear(q);
+	mp_clear(&e);
+	mp_clear(&p);
+	mp_clear(&q);
 }

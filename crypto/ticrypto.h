@@ -1,8 +1,10 @@
+#include "tommath.h"
+
 #ifndef TICRYPTO_H
 #define TICRYPTO_H
 
 typedef struct {
-	mpz_t n, p, q, D;
+	mp_int n, p, q, D;
 } tikey_t;
 
 void initialize_key(tikey_t *key);

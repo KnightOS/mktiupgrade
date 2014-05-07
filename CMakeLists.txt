@@ -4,15 +4,16 @@ set(CMAKE_CXX_FLAGS "-g")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "bin/")
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/modules/")
 add_definitions("-Wall")
-find_package(GMP REQUIRED)
 
-set(LIBS ${LIBS} ${GMP_LIBRARIES})
+set(LIBS ${LIBS})
 
 include_directories(
-    ${GMP_INCLUDE_DIRS}
     upgrade/
     crypto/
+    crypto/libtom/
 )
+
+FILE(GLOB TomSources crypto/libtom/*.c)
 
 add_executable(mktiupgrade
     main.c
@@ -21,6 +22,7 @@ add_executable(mktiupgrade
     upgrade/intelhex.c
     crypto/ticrypto.c
     crypto/md5.c
+    ${TomSources}
 )
 
 target_link_libraries(mktiupgrade ${LIBS})
