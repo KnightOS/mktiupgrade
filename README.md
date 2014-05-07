@@ -2,12 +2,16 @@
 
 Build Texas Instruments calculator OS upgrades from ROM dumps.
 
-## Compiling/Installation
+For additional info, see mktiupgrade.1.txt (or run man mktiupgrade if the man
+pages are installed on your system).
 
-On Linux/Mac/other unix-like:
+## Compiling
+
+On Windows, use cmake and Visual Studio, or MinGW. You'll have to read the docs
+yourself to figure it out.
+
+On Linux, Mac, and Cygwin, install cmake, a C compiler, make, and asciidoc. Run:
 
     $ cmake .
     $ make
     # make install
-
-On Windows, read the docs for cmake and choose your favorite way of buildling it (MinGW, Cygwin, Visual Studio, etc).
