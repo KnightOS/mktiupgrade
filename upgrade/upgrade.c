@@ -1,8 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <strings.h>
 #include <stdint.h>
+#ifdef _WIN32
+#include <Windows.h>
+#else
+#include <strings.h>
+#endif
 #include "devices.h"
 #include "intelhex.h"
 #include "upgrade.h"

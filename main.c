@@ -2,8 +2,12 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
+#ifdef _WIN32
+#include <Windows.h>
+#define strcasecmp lstrcmpiA
+#else
 #include <strings.h>
-#include <gmp.h>
+#endif
 #include "devices.h"
 #include "upgrade.h"
 #include "ticrypto.h"

@@ -2,7 +2,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#ifdef _WIN32
+#include <Windows.h>
+#else
 #include <strings.h>
+#endif
 #include <sys/types.h>
 #include "md5.h"
 #include "tommath.h"
