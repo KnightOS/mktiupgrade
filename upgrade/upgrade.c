@@ -55,7 +55,7 @@ void write_upgrade(FILE *file, device_type_t device, int pages[256], uint8_t *os
 	/* Signature */
 	if (signature) {
 		write_ihex(file, signature, sig_len, -1);
-		fprintf(file, ":00000001FF  -- CONVERT 2.6 --\r\n");
+		fprintf(file, ":00000001FF   -- CONVERT 2.6 --\r\n");
 	}
 	/* Length */
 	uint32_t chars = ftell(file) - l;

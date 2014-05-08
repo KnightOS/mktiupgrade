@@ -344,15 +344,19 @@ int main(int argc, char **argv) {
 			exit(1);
 		}
 		fseek(sig, 0L, SEEK_END);
-		long siglen = ftell(sig);
+		siglen = (size_t)ftell(sig);
 		fseek(sig, 0L, SEEK_SET);
-		signature = malloc(siglen);
+		signature = malloc(siglen + 3);
 		if (!signature) {
 			fprintf(stderr, "Unable to allocate signature. Is it too big?\n");
 			exit(1);
 		}
-		fread(signature, 1, siglen, sig);
+		signature[0] = 0x02;
+		signature[1] = 0x0D;
+		signature[2] = 0x40;
+		fread(signature + 3, 1, siglen, sig);
 		fclose(sig);
+		siglen += 3;
 	} else if (context.keyfile) {
 		signature = sign_os(os_header, len, os_data, page_count * 0x4000, context.key, &siglen);
 	} else {
