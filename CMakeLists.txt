@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.5)
-project(mktiupgrade)
+project(mktiupgrade C)
 set(CMAKE_CXX_FLAGS "-g")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "bin/")
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/modules/")
