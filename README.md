@@ -7,6 +7,8 @@ pages are installed on your system).
 
 ## Compiling
 
+Install cmake, make, asciidoc, and some other stuff.
+
 On Windows, use cmake and Visual Studio, or MinGW. You'll have to read the docs
 yourself to figure it out.
 
