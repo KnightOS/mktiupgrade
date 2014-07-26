@@ -141,11 +141,6 @@ int main(int argc, char **argv) {
 				exit(0);
 			} else if (arg("-k", "--key")) {
 				context.keyfile = argv[++i];
-				char *end = context.keyfile + strlen(context.keyfile);
-				long int name = strtol(context.keyfile, &end, 16);
-				if (end == context.keyfile + 2 && name >= 0 && name < 0x100) {
-					context.key_name = (uint8_t)name;
-				}
 			} else if (arg("-n", "--key-name")) {
 				char *namestr = argv[++i];
 				char *end = namestr + strlen(namestr);
