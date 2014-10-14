@@ -89,19 +89,19 @@ int parse_device(char *device, uint8_t *type) {
 	if (strcasecmp("TI-73", device) == 0 || strcasecmp("TI73", device) == 0) {
 		*type = TI73;
 		return 1;
-	} else if (strcasecmp("TI-83+", device) == 0 || strcasecmp("TI83p") == 0) {
+	} else if (strcasecmp("TI-83+", device) == 0 || strcasecmp("TI83p", device) == 0) {
 		*type = TI83p;
 		return 1;
-	} else if (strcasecmp("TI-83+SE", device) == 0 || strcasecmp("TI83pSE") == 0) {
+	} else if (strcasecmp("TI-83+SE", device) == 0 || strcasecmp("TI83pSE", device) == 0) {
 		*type = TI83pSE;
 		return 1;
-	} else if (strcasecmp("TI-84+", device) == 0 || strcasecmp("TI84p") == 0) {
+	} else if (strcasecmp("TI-84+", device) == 0 || strcasecmp("TI84p", device) == 0) {
 		*type = TI84p;
 		return 1;
-	} else if (strcasecmp("TI-84+SE", device) == 0 || strcasecmp("TI84pSE") == 0) {
+	} else if (strcasecmp("TI-84+SE", device) == 0 || strcasecmp("TI84pSE", device) == 0) {
 		*type = TI84pSE;
 		return 1;
-	} else if (strcasecmp("TI-84+CSE", device) == 0 || strcasecmp("TI84pCSE")) {
+	} else if (strcasecmp("TI-84+CSE", device) == 0 || strcasecmp("TI84pCSE", device) == 0) {
 		*type = TI84pCSE;
 		return 1;
 	}
