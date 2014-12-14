@@ -1,10 +1,8 @@
-mktiupgrade (1)
-==============
+# mktiupgrade (1)
 
 mktiupgrade - Build Texas Instruments calculator OS upgrades from ROM dumps
 
-Installation
-------------
+## Installation
 
 **Linux, Mac**:
 
@@ -18,13 +16,11 @@ Installation
 Install cygwin with cmake, asciidoc, gcc, and make. Then, follow the Linux
 instructions.
 
-Synopsis
---------
+## Synopsis
 
 'mktiupgrade' [options] _infile_ _outfile_ [pages...]
 
-Description
------------
+## Description
 
 Builds (and optionally signs) upgrade files to be sent to TI calculators from ROM
 dumps. _infile_ should be a ROM dump with the OS, and _outfile_ is the 73u, 8xu, or
@@ -32,8 +28,7 @@ dumps. _infile_ should be a ROM dump with the OS, and _outfile_ is the 73u, 8xu,
 will be extracted from the ROM dump and included with the upgrade. Additional
 pages may be automatically included if needed.
 
-Options
--------
+## Options
 
 *-d, \--device* <device>::
 	Specifies the target device type. If omitted, it will be inferred by the size
@@ -70,8 +65,7 @@ Options
 	The upgrade version, in the format "major.minor". Each part can be between 0
 	and 255, inclusive. The default is "1.0".
 
-Supported Devices
------------------
+## Supported Devices
 
 The following Texas Instruments calculators are supported:
 
@@ -82,8 +76,7 @@ The following Texas Instruments calculators are supported:
 * TI-84+ Silver Edition
 * TI-84+ Color Silver Edition
 
-Signing Keys
-------------
+## Signing Keys
 
 The Texas Instruments cryptographic signing keys may be found at
 <http://brandonw.net/calculators/keys/>. These keys do not work on all
@@ -91,8 +84,7 @@ calculators, and you may need to use an additional exploit to load your operatin
 system on newer models. An example of this process can be found in KnightOS,
 availble at <https://github.com/KnightOS/KnightOS>.
 
-Examples
---------
+## Examples
 
 mktiupgrade input.rom output.8xu 00 01 02 03 4F::
 	Makes an upgrade from pages 00-03 and 4F of _input.rom_, then writes it to
@@ -105,9 +97,18 @@ mktiupgrade -s exploit.sig -n 0F input.rom output.8cu 00 01 02 03::
 	Builds an upgrade and uses the contents of _exploit.sig_ as the signature, and
 	indicates that the key is the 0F key. The result is written to _output.8cu_.
 
-Authors
--------
+## Authors
 
 Maintained by Drew DeVault <sir@cmpwn.com>, who is assisted by other open
 source contributors. For more information about mktiupgrade development, see
 <https://github.com/KnightOS/mktiupgrade>.
+
+## Help, Bugs, Feedback
+
+If you need help with KnightOS, want to keep up with progress, chat with
+developers, or ask any other questions about KnightOS, you can hang out in the
+IRC channel: [#knightos on irc.freenode.net](http://webchat.freenode.net/?channels=knightos).
+ 
+To report bugs, please create [a GitHub issue](https://github.com/KnightOS/KnightOS/issues/new) or contact us on IRC.
+ 
+If you'd like to contribute to the project, please see the [contribution guidelines](http://www.knightos.org/contributing).
