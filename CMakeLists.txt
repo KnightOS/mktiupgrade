@@ -1,11 +1,13 @@
 cmake_minimum_required(VERSION 2.8.5)
-project(mktiupgrade C)
-set(CMAKE_CXX_FLAGS "-g")
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "bin/")
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/modules/")
-add_definitions("-Wall")
 
-set(LIBS ${LIBS})
+project(mktiupgrade C)
+
+set(CMAKE_C_STANDARD 99)
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -pedantic -Werror")
+
+if (NOT DEFINED CMAKE_BUILD_TYPE)                                                                              
+    set(CMAKE_BUILD_TYPE Release CACHE STRING "Build type (Debug or Release)" FORCE)                           
+endif() 
 
 include_directories(
     upgrade/
@@ -25,29 +27,17 @@ add_executable(mktiupgrade
     ${TomSources}
 )
 
-target_link_libraries(mktiupgrade ${LIBS})
-
-install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/bin/mktiupgrade
-    DESTINATION bin)
-
-set(CMAKE_BUILD_TYPE Release)
+install(TARGETS mktiupgrade DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
 
 ADD_CUSTOM_TARGET(man ALL)
 
 ADD_CUSTOM_COMMAND(
   TARGET man
-  SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/mktiupgrade.1.txt
   COMMAND a2x --no-xmllint --doctype manpage --format manpage ${CMAKE_CURRENT_SOURCE_DIR}/mktiupgrade.1.txt -D ${CMAKE_CURRENT_BINARY_DIR}
   OUTPUTS ${CMAKE_CURRENT_BINARY_DIR}/mktiupgrade.1
 )
 
-ADD_CUSTOM_COMMAND(
-  TARGET man
-  SOURCE man
-  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/mktiupgrade.1
-)
-
 INSTALL(
     FILES ${CMAKE_CURRENT_BINARY_DIR}/mktiupgrade.1
-    DESTINATION ${CMAKE_INSTALL_PREFIX}/man/man1
+    DESTINATION ${CMAKE_INSTALL_PREFIX}/share/man/man1
 )
