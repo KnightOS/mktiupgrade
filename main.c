@@ -158,7 +158,7 @@ int main(int argc, char **argv) {
 				char *majorstr = argv[++i];
 				char *minorstr = strstr(majorstr, ".");
 				if (minorstr == NULL) {
-					fprintf(stderr, errstr);
+					fprintf(stderr, "%s", errstr);
 					exit(1);
 				}
 				minorstr++;
@@ -166,12 +166,12 @@ int main(int argc, char **argv) {
 				char *end = majorstr;
 				major = strtol(majorstr, &end, 10);
 				if (*end != '.') {
-					fprintf(stderr, errstr);
+					fprintf(stderr, "%s", errstr);
 					exit(1);
 				}
 				minor = strtol(minorstr, &end, 10);
 				if (*end != '\0') {
-					fprintf(stderr, errstr);
+					fprintf(stderr, "%s", errstr);
 					exit(1);
 				}
 				if (major < 0 || major >= 0x100 || minor < 0 || minor >= 0x100) {
@@ -331,7 +331,7 @@ int main(int argc, char **argv) {
 	}
 
 	uint8_t *signature = NULL;
-	size_t siglen;
+	size_t siglen = 0;
 	if (context.sigfile) {
 		FILE *sig = fopen(context.sigfile, "r");
 		if (!sig) {
