@@ -4,16 +4,14 @@ mktiupgrade - Build Texas Instruments calculator OS upgrades from ROM dumps
 
 ## Installation
 
-**Linux, Mac**:
+**Linux, Mac, etc.**:
 
-1. Install cmake and asciidoc
-2. `cmake .`
-3. `make`
-4. `make install`
+	$ make
+	# make install # as root
 
 **Windows**
 
-Install cygwin with cmake, asciidoc, gcc, and make. Then, follow the Linux
+Install cygwin with asciidoc, gcc, and make. Then, follow the Linux
 instructions.
 
 ## Synopsis
@@ -107,7 +105,7 @@ source contributors. For more information about mktiupgrade development, see
 
 If you need help with KnightOS, want to keep up with progress, chat with
 developers, or ask any other questions about KnightOS, you can hang out in the
-IRC channel: [#knightos on irc.freenode.net](http://webchat.freenode.net/?channels=knightos).
+IRC channel: [#knightos on irc.libera.chat](https://web.libera.chat).
  
 To report bugs, please create [a GitHub issue](https://github.com/KnightOS/KnightOS/issues/new) or contact us on IRC.
  
