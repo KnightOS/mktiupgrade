@@ -18,7 +18,7 @@ $(CRYPTOOBJ) $(TOMOBJ) $(UPGRADEOBJ) $(OBJ):
 
 mktiupgrade: $(CRYPTOOBJ) $(TOMOBJ) $(UPGRADEOBJ) $(OBJ)
 	$(CC) -o $@ $(CRYPTOOBJ) $(TOMOBJ) $(UPGRADEOBJ) $(OBJ)
-	a2x --no-xmllint --doctype manpage --format manpage mktiupgrade.1.txt -v
+	scdoc < mktiupgrade.1.scdoc > mktiupgrade.1
 
 clean:
 	rm -rf mktiupgrade mktiupgrade.1

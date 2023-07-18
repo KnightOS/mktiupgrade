@@ -11,7 +11,7 @@ mktiupgrade - Build Texas Instruments calculator OS upgrades from ROM dumps
 
 **Windows**
 
-Install cygwin with asciidoc, gcc, and make. Then, follow the Linux
+Install cygwin with scdoc, gcc, and make. Then, follow the Linux
 instructions.
 
 ## Synopsis
